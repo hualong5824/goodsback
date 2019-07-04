@@ -27,7 +27,7 @@
 		methods:{
 			
 			loginBtn(){
-				alert(1)
+		
 				this.axios.
 				post('login',{
 					username:this.fromData.user,
