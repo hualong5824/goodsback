@@ -58,7 +58,11 @@
 					</el-submenu>
 				</el-menu>
 			</el-aside>
-			<el-main>Main</el-main>
+			<el-main>
+				<div>
+				<router-view></router-view>
+				</div>
+			</el-main>
 		</el-container>
 	</el-container>
 </template>
@@ -84,9 +88,6 @@
 				.catch((err)=>{
 					this.$message('不退你瞎点个啥？')
 				})
-						
-		
-			
 			}
 		}
 	}
