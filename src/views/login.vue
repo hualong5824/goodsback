@@ -6,7 +6,8 @@
 				<el-input  v-model="fromData.user"></el-input>
 			</el-form-item>
 			<el-form-item label="密码" >
-				<el-input v-model="fromData.password"></el-input>
+				<el-input @keyup.enter.native="loginBtn"
+				v-model="fromData.password" ></el-input>
 			</el-form-item>
 		
 		 <el-button type="primary" class="login-box-btn" @click="loginBtn">登录</el-button>
@@ -26,6 +27,7 @@
 		methods:{
 			
 			loginBtn(){
+				alert(1)
 				this.axios.
 				post('login',{
 					username:this.fromData.user,
@@ -39,10 +41,10 @@
 						// 登录成功
 						this.$message.success(msg)
 						sessionStorage.setItem('token',res.data.data.token)
+						this.$router.push('/')
 						}else{
 							// 登陆失败
 							this.$message.error(msg)
-
 						}
 					console.log()
 				})
@@ -51,6 +53,7 @@
 				})
 				
 			}
+			
 		}
 	}
 </script>
