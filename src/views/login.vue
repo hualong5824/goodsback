@@ -26,32 +26,22 @@
 		},
 		methods:{
 			
-			loginBtn(){
-		
-				this.axios.
-				post('login',{
+			async loginBtn(){
+				
+			const res = await this.axios.post('login',{
 					username:this.fromData.user,
 					password:this.fromData.password,
-				})
-				.then((res)=>{
-					console.log(res.data)
+				})	
 					var {meta:{msg,status}} =res.data
-					// var {data:{email,id,mobile,rid,token,username}} =res.data
 					if(status==200){
 						// 登录成功
 						this.$message.success(msg)
 						sessionStorage.setItem('token',res.data.data.token)
-						this.$router.push('/')
+						this.$router.push('/user')
 						}else{
 							// 登陆失败
 							this.$message.error(msg)
 						}
-					console.log()
-				})
-				.catch((err)=>{
-					console.log(err)
-				})
-				
 			}
 			
 		}

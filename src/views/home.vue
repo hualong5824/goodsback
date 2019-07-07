@@ -2,15 +2,15 @@
 	<el-container>
 		<el-header>
 			<el-row>
-				<el-col :span="4">
-					<img src="@/assets/img/head_logo.png" alt="">
+				<el-col :span="4" style="text-align: left;">
+					<img src="@/assets/img/head_logo.png" alt="" style="height: 100%;text-align: left;">
 				</el-col>
 				<el-col :span="18">
-					<h2>爱途电商后台管理</h2>
+					<h2 style="color: #fff;">爱途电商后台管理</h2>
 					</div>
 				</el-col>
 				<el-col :span="2">
-					<a href="" @click.prevent="quit">退出</a>
+					<a href="" @click.prevent="quit" style="text-decoration: none;color: #Fff;">退出</a>
 				</el-col>
 			</el-row>
 		</el-header>
@@ -59,16 +59,16 @@
 				</el-menu>
 			</el-aside>
 			<el-main>
-				<div>
+			
 				<router-view></router-view>
-				</div>
+			
 			</el-main>
 		</el-container>
 	</el-container>
 </template>
 <script>
 	export default{
-		beforeMount(){
+		mounted(){
 			var token =sessionStorage.getItem('token')
 			if(!token){
 				this.$message('您还未登录')
@@ -120,10 +120,4 @@
 
 	}
 
-	.el-main {
-		background-color: #E9EEF3;
-		color: #333;
-		text-align: center;
-
-	}
 </style>
