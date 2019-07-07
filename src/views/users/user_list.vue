@@ -72,7 +72,27 @@
 							<el-button type="primary" @click="e_cfm_save(scope.row)">确 定</el-button>
 						</div>
 					</el-dialog>
-					<el-button type="success" icon="el-icon-check" size="mini" plain></el-button>
+					<el-button type="success" icon="el-icon-check" size="mini" plain @click="handleRole(scope.row)"></el-button>
+					<!-- 分配角色 -->
+					<el-dialog title="分配角色" :visible.sync="dialogFormRole" width="30%">
+						<el-form :model="e_form" ref="ruleForm" :rules="rules">
+							<el-form-item label="用户名" :label-width="formLabelWidth">
+								{{role_user}}
+								<!-- <el-input v-model="e_form.username" autocomplete="off" disabled></el-input> -->
+							</el-form-item>
+							<el-form-item label="用户角色">
+								<el-select v-model="role_option_value">
+									<el-option label="请选择" :value="1" disabled></el-option>
+									<el-option v-for="item in options" :key="item.id" :label="item.roleName" :value="item.id">
+									</el-option>
+								</el-select>
+							</el-form-item>
+						</el-form>
+						<div slot="footer" class="dialog-footer">
+							<el-button @click="dialogFormRole = false">取 消</el-button>
+							<el-button type="primary" @click="role_option_change(scope.row)">确 定</el-button>
+						</div>
+					</el-dialog>
 					<el-button type="danger" icon="el-icon-delete" size="mini" plain @click="handleDelete(scope.row.id)"></el-button>
 					<!-- <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
 					<el-button size="mini" type="danger" @click="handleDelete(scope.row.id)">删除</el-button> -->
@@ -90,6 +110,14 @@
 	export default {
 		data() {
 			return {
+
+				// 分配角色中的下拉信息
+				options: [],
+
+				role_option_value: 0,
+				urser_id:0,
+
+
 				tableData: [{
 					date: '2016-05-02',
 					name: '王小虎',
@@ -103,6 +131,9 @@
 				inputVule: '', //搜索框内容
 				dialogFormVisible: false, //添加弹窗条件
 				dialogFormEdit: false, //编辑弹窗条件
+				dialogFormRole: false, //分配弹窗条件
+				role_user: '默认分配用户名', //默认分配用户名
+
 				form: {
 					username: '',
 					password: '',
@@ -115,7 +146,7 @@
 					password: '',
 					email: '',
 					mobile: '',
-					e_id:''
+					e_id: ''
 
 				},
 				formLabelWidth: '80px',
@@ -166,24 +197,57 @@
 			}
 		},
 		methods: {
-			//编辑
-			handleEdit(i) {
-				console.log(i.id)
-				this.e_form.e_id=i.id
-				this.dialogFormEdit = true
-				this.e_form.username = i.username
-				this.e_form.email = i.email
-				this.e_form.mobile = i.mobile
+
+			// 分配角色
+			async handleRole(u) {
+				this.dialogFormRole = true
+				this.role_user = u.username
+
+
+
+				const res1 = await this.axios.get('roles')
+				var {
+					data: {
+						rid
+					}
+				} = res1.data
+				var {
+					meta: {
+						msg,
+						status
+					}
+				} = res1.data
+				var {
+					data
+				} = res1.data
+				this.options = data
+				if (status == 200) {
+					const res0 = await this.axios.get('users/' + u.id)
+					console.log(res0)
+					var {
+						data: {
+							rid,id
+						}
+					} = res0.data
+					var {
+						meta: {
+							msg,
+							status
+						}
+					} = res0.data
 				
+					
+					this.role_option_value = rid
+					this.urser_id=id
+					console.log(this.role_option_value)
+				}
 
 			},
-			// 编辑确定
-			async e_cfm_save(i){
-				
-				const res = await this.axios.put('users/' +this.e_form.e_id,{
-				
-					email:	this.e_form.email,
-					mobile:	this.e_form.mobile
+			// 更改用户角色
+			async role_option_change(i) {
+			
+				const res = await this.axios.put('users/' + this.urser_id + '/role',{
+					rid:this.role_option_value
 				})
 				var {
 					meta: {
@@ -191,13 +255,50 @@
 						status
 					}
 				} = res.data
-					if (status == 200) {
+				if(status==200){
+						this.$message.success(msg)
+						this.dialogFormRole = false
+				}else{
+					this.$message.error(msg)
+				}
+				
+			
+				
+			},
+
+			//编辑
+			handleEdit(i) {
+				console.log(i.id)
+				this.e_form.e_id = i.id
+				this.dialogFormEdit = true
+				this.e_form.username = i.username
+				this.e_form.email = i.email
+				this.e_form.mobile = i.mobile
+
+
+			},
+
+			// 编辑确定
+			async e_cfm_save(i) {
+
+				const res = await this.axios.put('users/' + this.e_form.e_id, {
+
+					email: this.e_form.email,
+					mobile: this.e_form.mobile
+				})
+				var {
+					meta: {
+						msg,
+						status
+					}
+				} = res.data
+				if (status == 200) {
 					this.dialogFormEdit = false
 					this.e_form.username = ''
 					this.e_form.email = ''
 					this.e_form.mobile = ''
 					this.gainList()
-					}
+				}
 				console.log(res)
 			},
 			// 添加
